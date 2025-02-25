@@ -19,7 +19,11 @@ module axi_slave_interface (
     output reg [31:0] axi_rdata,
     output reg [1:0] axi_rresp,
     output reg axi_rvalid,
-    input wire axi_rready
+    input wire axi_rready,
+    input wire [47:0] cmd_reg,
+    input wire cmd_valid,
+    input wire crc_error,
+    input wire timeout_error
 );
 
     // Internal signals
