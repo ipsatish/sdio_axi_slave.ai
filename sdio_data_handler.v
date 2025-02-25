@@ -1,3 +1,4 @@
+
 `timescale 1ns / 1ps
 
 module sdio_data_handler (
@@ -15,6 +16,10 @@ module sdio_data_handler (
     reg [3:0] data_state;
     reg [15:0] crc16;
     reg [15:0] timeout_counter;
+
+    // Transmit (TX) and Receive (RX) buffers
+    reg [3:0] tx_buffer;
+    reg [3:0] rx_buffer;
 
     // CRC16 Calculation Function
     function [15:0] crc16_next;
@@ -54,14 +59,16 @@ module sdio_data_handler (
                         data_state <= 4'b0001;
                      end else begin
                         data_dir_reg <= 1'b1; // Set direction to output for write
-                        data_out_reg <= 4'b0101; // Example data to write
+                        tx_buffer <= 4'b0101; // Example data to write
                         data_state <= 4'b0001;
                      end
             4'b0001: if (data_dir_reg == 1'b0) begin
-                        data_in_reg <= sd_data;
+                        rx_buffer <= sd_data;
+                        data_in_reg <= rx_buffer;
                         data_valid <= 1'b1;
                         data_state <= 4'b0010;
                      end else begin
+                        data_out_reg <= tx_buffer;
                         data_state <= 4'b0010;
                      end
             4'b0010: if (data_valid) begin
